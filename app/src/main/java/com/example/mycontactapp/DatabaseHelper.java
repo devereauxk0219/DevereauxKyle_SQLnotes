@@ -1,11 +1,11 @@
 package com.example.mycontactapp;
 
+import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
@@ -14,7 +14,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "Contact2019.db";
     public static final String TABLE_NAME = "Contact2019_table";
     public static final String ID = "ID";
+    public static final String COLUMN_ID_CONTACT = "contact";
     public static final String COLUMN_NAME_CONTACT = "contact";
+    public static final String COLUMN_PHONE_CONTACT = "contact";
+    public static final String COLUMN_ADDRESS_CONTACT = "contact";
 
     public static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + TABLE_NAME + " (" +
@@ -45,11 +48,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean insertData(String name) {
+    public boolean insertData(String name, String phone, String address) {
         Log.d("MyContactApp", "DatabaseHelper: inserting data");
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
+        contentValues.put(COLUMN_ID_CONTACT, ID);
         contentValues.put(COLUMN_NAME_CONTACT, name);
+        contentValues.put(COLUMN_PHONE_CONTACT, phone);
+        contentValues.put(COLUMN_ADDRESS_CONTACT, address);
 
         long result = db.insert(TABLE_NAME, null, contentValues);
         //is the below correct? i dont know
@@ -70,17 +76,5 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor res = db.rawQuery("select * from " + TABLE_NAME, null);
         return res;
     }
-
-    public void showMessage(String title, String message)
-    {
-        //put more degugging stuff in here
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setCancelable(true);
-        builder.setTitle(title);
-        builder.setMessage(message);
-        builder.show();
-    }
-
-
 
 }
