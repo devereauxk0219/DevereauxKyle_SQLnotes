@@ -31,8 +31,26 @@ public class MainActivity extends AppCompatActivity {
 
     public void addData(View view)
     {
-        System.out.println(editName.getText().toString());
-        boolean isInserted = myDb.insertData(editName.getText().toString(), editPhone.getText().toString(), editAddress.getText().toString());
+        //checks to see if identical contact already exists
+        Cursor res = myDb.getAllData();
+
+        String name = editName.getText().toString();
+        String phone = editPhone.getText().toString();
+        String address = editAddress.getText().toString();
+
+        while(res.moveToNext())
+        {
+            if(name.equals(res.getString(1))
+                && phone.equals(res.getString(2))
+                && address.equals(res.getString(3)))
+            {
+                Toast.makeText( MainActivity.this, "Failed - contact already exists", Toast.LENGTH_LONG).show();
+                return;
+            }
+        }
+
+        //runs if identical contact not found
+        boolean isInserted = myDb.insertData(name, phone, address);
 
         if(isInserted == true)
         {
@@ -61,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
             buffer.append("ID: " + res.getString(0) + "\n");
             buffer.append("Name: " + res.getString(1) + "\n");
             buffer.append("Phone: " + res.getString(2) + "\n");
-            buffer.append("Address: " + res.getString(3) + "\n");
+            buffer.append("Address: " + res.getString(3) + "\n\n");
         }
 
         showMessage("Data", buffer.toString());
@@ -84,15 +102,16 @@ public class MainActivity extends AppCompatActivity {
         StringBuffer buffer = new StringBuffer();
         while(res.moveToNext())   //CHECK if LOGICAL, probably isnt.
         {
-            boolean ifAdd = true;
+            boolean add = true;
             for(int i = 0; i<3; i++)
             {
-                if(searchParams[i] != null && !searchParams[i].equals(res.getString(i+1))) {
-                    ifAdd = false;
+                if(!searchParams[i].equals("") && !searchParams[i].equals(res.getString(i+1))) {
+                    add = false;
                     break;
                 }
             }
-            if(ifAdd) {
+            if(add)
+            {
                 buffer.append("ID: " + res.getString(0) + "\n");
                 buffer.append("Name: " + res.getString(1) + "\n");
                 buffer.append("Phone: " + res.getString(2) + "\n");
